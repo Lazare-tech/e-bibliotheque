@@ -1,0 +1,125 @@
+{% load static %}
+
+<style>
+:root {
+  --primary: #2563eb;
+  --accent: #10b981;
+  --dark: #1e293b;
+}
+
+.modern-footer {
+  background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
+  color: white;
+  padding: 1.5rem 0;
+  text-align: center;
+  position: relative;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+
+.modern-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+  background-size: 200% 100%;
+  animation: gradientMove 3s linear infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* Logo & Texte */
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo-icon {
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo-icon i {
+  font-size: 1rem;
+}
+
+.footer-logo-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Réseaux sociaux */
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0.8rem 0;
+}
+
+.social-icon {
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.5rem;
+}
+
+.footer-bottom i.heart-icon {
+  color: #ef4444;
+}
+</style>
+
+<footer class="modern-footer">
+  <div class="container">
+
+    <a href="/" class="footer-logo">
+      <div class="footer-logo-icon">
+        <i class="fas fa-book-open"></i>
+      </div>
+      <h3 class="footer-logo-text">E-Bibliothèque</h3>
+    </a>
+
+    <div class="footer-social">
+      <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+      <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Bibliothèque Numérique — Tous droits réservés.</p>
+    </div>
+
+  </div>
+</footer>

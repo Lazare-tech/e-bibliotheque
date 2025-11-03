@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Détails du Document{% endblock title %}
+
+
+{% block content %}
+<div class="container py-5 detail-header">
+
+  <!-- Détail du livre -->
+  <div class="row align-items-center mb-5 g-4">
+
+    <!-- Image du livre + actions -->
+    <div class="col-md-5 text-center">
+      <img src="{{ livre.cover_image.url }}" alt="Livre" class="img-fluid rounded shadow-lg mb-3"
+        style="max-height: 420px; object-fit: cover;">
+
+      <!-- Boutons d’action -->
+      <div class="mt-3 d-flex flex-wrap justify-content-center gap-3">
+  <a href="#" class="btn btn-primary icon-btn shadow-sm" title="Lire">
+    <i class="fas fa-book-open"></i>
+  </a>
+  <a href="#" class="btn btn-outline-success icon-btn shadow-sm" title="Partager">
+    <i class="fas fa-share-alt"></i>
+  </a>
+  <a href="#" class="btn btn-outline-info icon-btn shadow-sm" title="Discuter">
+    <i class="fas fa-comments"></i>
+  </a>
+  <a href="#" class="btn btn-outline-warning icon-btn shadow-sm" title="Télécharger">
+    <i class="fas fa-download"></i>
+  </a>
+  <a href="#" class="btn btn-outline-dark icon-btn shadow-sm" title="Favoris">
+    <i class="fas fa-star"></i>
+  </a>
+</div>
+
+    </div>
+
+    <!-- Détails du livre -->
+    <div class="col-md-7">
+      <h2 class="fw-bold mb-3 text-primary">{{livre.titre}}</h2>
+
+      <div class="mb-3">
+        <p class="mb-1"><strong>Auteur :</strong> John Doe</p>
+        <p class="mb-1"><strong>Catégorie :</strong> {{livre.categorie}}</p>
+        <p class="mb-3"><strong>Langue :</strong>{{ livre.langue}}</p>
+      </div>
+
+      <!-- Résumé -->
+      <p class="text-muted mb-4">
+        {{ livre.resume}}
+      </p>
+
+      <!-- Statistiques -->
+      <div class="d-flex flex-column gap-3 mb-4">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-download me-2 text-primary"></i>
+          <span>{{ livre.nbtelechargement }}</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="fas fa-heart me-2 text-danger"></i>
+          <span>356 mentions J’aime</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="fas fa-book me-2 text-info"></i>
+          <span>{{ livre.nbpage }}</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <i class="fas fa-calendar-alt me-2 text-secondary"></i>
+          <span>{{ livre.datepublication }}</span>
+        </div>
+      </div>
+
+      <!-- Bouton Ajouter un commentaire -->
+      <button class="btn btn-outline-primary px-4 fw-semibold shadow-sm" data-bs-toggle="modal"
+        data-bs-target="#commentModal">
+        ✍️ Ajouter un commentaire
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Commentaire -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="commentModalLabel">💬 Ajouter un commentaire</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      {% if user.is_authenticated %}
+
+      <div class="modal-body">
+
+
+        <div class="comment-form">
+          <form method="POST" action="{% url 'bibliotheque:ajouter_commentaire' livre.idlivre %}">
+            {% csrf_token %}
+            <textarea name="contenu" class="form-control" id="commentText" rows="4"
+              placeholder="Partagez votre avis sur ce livre..."></textarea>
+
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+
+          </form>
+        </div>
+        {% else %}
+        <p style="text-align: center; padding: 2rem; color: #666;">
+          Connectez-vous pour laisser un commentaire
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Section commentaires -->
+ 
+<section class="container mb-5">
+<div class="row d-flex align-items-center justify-content-between comments-section mt-5 mb-3">
+  <div class="col-auto">
+    <h4 class="mb-0">Commentaires</h4>
+  </div>
+
+  <div class="col-auto">
+    <button class="btn btn-outline-secondary btn-sm">
+      Voir tous les commentaires
+    </button>
+  </div>
+</div>
+<div class="comments-list mt-4">
+  {% for comment in commentaires %}
+    {% if not comment.parent %}
+      <!-- Commentaire parent -->
+      <div class="comment-item border-bottom pb-3 mb-4">
+        <div class="d-flex align-items-start">
+          <!-- Avatar parent -->
+          {% if comment.utilisateur.image %}
+            <img src="{{ comment.utilisateur.image.url }}" class="rounded-circle me-3" width="45" height="45">
+          {% else %}
+            <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-3"
+                 style="width:45px; height:45px; font-size:1.2rem;">
+              {{ comment.utilisateur.username|slice:":1"|upper }}
+            </div>
+          {% endif %}
+
+          <div class="flex-grow-1">
+            <div class="d-flex gap-2 align-items-start">
+              <div>
+                <strong>{{ comment.utilisateur.username }}</strong>
+                <small class="text-muted"> — {{ comment.datecommentaire|date:"d/m/Y à H:i" }}</small>
+              </div>
+
+              <!-- Éditer / Supprimer -->
+              {% if user.is_authenticated and user == comment.utilisateur %}
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editCommentModal{{ comment.idcommentaire }}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <form method="POST"
+                      action="{% url 'bibliotheque:supprimer_commentaire' comment.idcommentaire %}"
+                      style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce commentaire ?');">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+              </div>
+              {% endif %}
+            </div>
+
+            <p class="mt-1 mb-2 text-muted">{{ comment.contenu }}</p>
+
+            <!-- Actions -->
+            <div class="d-flex flex-column align-items-start gap-1">
+              {% if user.is_authenticated and user != comment.utilisateur %}
+              <button class="btn btn-link p-0 text-primary small reply-btn text-decoration-none"
+                      data-comment-id="{{ comment.idcommentaire }}">
+                <i class="fas fa-reply"></i> Répondre
+              </button>
+              {% endif %}
+
+              {% if comment.reponses.all %}
+              <button class="btn btn-link text-muted small toggle-replies text-decoration-none mt-1"
+                      data-target="#replies-{{ comment.idcommentaire }}">
+                <i class="fas fa-chevron-down"></i>
+                <span style="color:blue">{{ comment.reponses.count }} réponse{{ comment.reponses.count|pluralize }}</span>
+              </button>
+              {% endif %}
+            </div>
+
+            <!-- Formulaire de réponse caché -->
+            <form method="POST" action="{% url 'bibliotheque:ajouter_commentaire' livre.idlivre %}"
+                  class="reply-form mt-2 d-none" id="reply-form-{{ comment.idcommentaire }}">
+              {% csrf_token %}
+              <input type="hidden" name="parent_id" value="{{ comment.idcommentaire }}">
+              <textarea name="contenu" class="form-control mb-2" rows="2" placeholder="Répondre à @{{ comment.utilisateur.username }}"></textarea>
+              <button type="submit" class="btn btn-sm btn-primary">Répondre</button>
+            </form>
+
+            <!-- Réponses -->
+            {% if comment.reponses.all %}
+            <div class="ms-4 mt-3 d-none" id="replies-{{ comment.idcommentaire }}">
+              {% for reply in comment.reponses.all %}
+                <div class="d-flex mb-3">
+                  <!-- Avatar réponse -->
+                  {% if reply.utilisateur.image %}
+                    <img src="{{ reply.utilisateur.image.url }}" class="rounded-circle me-3" width="35" height="35">
+                  {% else %}
+                    <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-3"
+                         style="width:35px; height:35px; font-size:0.9rem;">
+                      {{ reply.utilisateur.username|slice:":1"|upper }}
+                    </div>
+                  {% endif %}
+
+                  <div class="flex-grow-1">
+                    <div class="d-flex gap-2 align-items-start">
+                      <strong>{{ reply.utilisateur.username }}</strong>
+                      <small class="text-muted">{{ reply.datecommentaire|date:"d/m/Y à H:i" }}</small>
+
+                      {% if user.is_authenticated and user == reply.utilisateur %}
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editCommentModal{{ reply.idcommentaire }}">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <form method="POST" action="{% url 'bibliotheque:supprimer_commentaire' reply.idcommentaire %}" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce commentaire ?');">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </form>
+                      </div>
+                      {% endif %}
+                    </div>
+                                <p class="mt-1 mb-2 text-muted">{{ reply.contenu }}</p>
+                    <!-- Actions réponse -->  
+                  
+                    {% if user.is_authenticated and user != reply.utilisateur %}
+                    <button class="btn btn-link p-0 text-primary small reply-btn text-decoration-none"
+                            data-comment-id="{{ reply.idcommentaire }}">
+                      <i class="fas fa-reply"></i> Répondre
+                    </button>
+                    {% endif %}
+
+                    <!-- Formulaire de réponse à la réponse -->
+                    <form method="POST" action="{% url 'bibliotheque:ajouter_commentaire' livre.idlivre %}"
+                          class="reply-form mt-2 d-none" id="reply-form-{{ reply.idcommentaire }}">
+                      {% csrf_token %}
+                      <input type="hidden" name="parent_id" value="{{ reply.idcommentaire }}">
+                      <textarea name="contenu" class="form-control mb-2" rows="2" placeholder="Répondre à @{{ reply.utilisateur.username }}"></textarea>
+                      <button type="submit" class="btn btn-sm btn-primary">Répondre</button>
+                    </form>
+
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% empty %}
+    <p class="text-center text-muted mt-4">Aucun commentaire pour le moment. Soyez le premier à donner votre avis !</p>
+  {% endfor %}
+</div>
+
+
+</section>
+
+
+  <!-- Modal d'édition du commentaire -->
+  {% if user.is_authenticated and user == comment.utilisateur %}
+  <div class="modal fade" id="editCommentModal{{ comment.idcommentaire }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'bibliotheque:modifier_commentaire' comment.idcommentaire %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">Modifier le commentaire</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          </div>
+          <div class="modal-body">
+            <textarea name="contenu" class="form-control" rows="3">{{ comment.contenu }}</textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+{% comment %} {% empty %}
+  <p class="text-center py-4 text-muted">
+    Aucun commentaire pour le moment. Soyez le premier à donner votre avis !
+  </p>
+{% endfor %} {% endcomment %}
+
+
+  <!-- Bouton voir tous -->
+</section>
+<!-- Livres similaires -->
+<section class="container mt-5">
+  <h4 class="mb-4">📚 Livres similaires</h4>
+
+  {% if livres_similaires %}
+    <div class="row g-4 p-2">
+      {% for livre_sim in livres_similaires %}
+       <div class="col-md-3 col-sm-6">
+            <a href="{% url 'bibliotheque:details' livre_sim.idlivre %}" style="text-decoration: none; color: inherit;">
+              <div class="card doc-card h-100 shadow-sm">
+                {% if livre_sim.cover_image %}
+                  <img src="{{ livre_sim.cover_image.url }}" class="card-img-top" alt="{{ livre_sim.titre }}">
+                {% else %}
+                  <img src="{% static 'images/default-cover.jpg' %}" class="card-img-top" alt="Couverture par défaut">
+                {% endif %}
+                <div class="card-body">
+                  <h6 class="card-title text-muted">{{ livre_sim.titre }}</h6>
+                  <p class="text-secondary small mb-0">{{ livre_sim.auteur }}</p>
+                </div>
+              </div>
+            </a>
+          </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">Aucun livre similaire disponible pour le moment.</p>
+  {% endif %}
+</section>
+
+</div>
+{% endblock content %}

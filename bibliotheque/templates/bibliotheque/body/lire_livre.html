@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+  <h3>{{ livre.titre }}</h3>
+  <p><strong>Auteur :</strong> {{ livre.auteur }}</p>
+  <p><strong>Langue :</strong> {{ livre.langue }}</p>
+
+  <div class="mt-4">
+    {% if livre.fichier %}
+      <iframe src="{{ livre.fichier.url }}" width="100%" height="600px" class="border rounded"></iframe>
+    {% else %}
+      <p class="text-muted">Aucun fichier à afficher.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

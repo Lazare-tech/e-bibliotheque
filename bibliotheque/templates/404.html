@@ -1,0 +1,154 @@
+  <!DOCTYPE html>
+
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 — Page non trouvée</title>
+
+  <!-- Bootstrap CDN (optionnel si tu utilises déjà Bootstrap) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome pour icônes (optionnel) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <style>
+    :root{
+      --accent: #0d6efd;
+      --muted: #6c757d;
+      --bg: #f8f9fa;
+    }
+    html,body{height:100%}
+    body{
+      background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0;
+      padding:2rem;
+      color:#212529;
+    }
+
+    .error-wrap{
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(22, 28, 37, 0.08);
+      max-width: 980px;
+      width:100%;
+      padding: 2.25rem;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px){
+      .error-wrap{ grid-template-columns: 1fr; text-align: center;}
+    }
+
+    .error-ill{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .error-ill .card-graphic{
+      width: 100%;
+      max-width: 360px;
+      height: 240px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(13,110,253,0.12), rgba(13,110,253,0.04));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: inset 0 -10px 30px rgba(13,110,253,0.03);
+    }
+
+    .error-ill .card-graphic i{
+      font-size: 72px;
+      color: var(--accent);
+      opacity: .95;
+    }
+
+    .error-body h1{
+      font-size: clamp(28px, 4vw, 38px);
+      margin: 0 0 .25rem 0;
+      letter-spacing: -0.02em;
+    }
+
+    .error-body p.lead{
+      margin:0 0 1rem 0;
+      color: var(--muted);
+    }
+
+    .error-meta{
+      display:flex;
+      gap:.75rem;
+      flex-wrap:wrap;
+      margin-top:1rem;
+    }
+
+    .btn-cta{
+      min-width: 150px;
+    }
+
+    .small-muted{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    footer.error-footer{
+      margin-top: .75rem;
+      font-size:.85rem;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="error-wrap" role="main" aria-labelledby="page-title">
+    <div class="error-body">
+      <h1 id="page-title">404 — Page non trouvée</h1>
+      <p class="lead">Désolé, la page que vous cherchez n’existe pas ou a été déplacée.</p>
+
+      <p class="small-muted">Vous pouvez retourner à la page d’accueil, vérifier l’URL ou faire une recherche dans notre bibliothèque.</p>
+
+      <div class="error-meta mt-3">
+        <a href="{% url 'bibliotheque:home' %}" class="btn btn-primary btn-cta shadow-sm">
+          <i class="fas fa-home me-2"></i> Accueil
+        </a>
+
+        <a href="{% url 'bibliotheque:recherche_livres' %}" class="btn btn-outline-secondary shadow-sm">
+          <i class="fas fa-search me-2"></i> Rechercher des livres
+        </a>
+
+        <a href="{% url 'bibliotheque:contact' %}" class="btn btn-outline-info shadow-sm">
+          <i class="fas fa-envelope me-2"></i> Nous contacter
+        </a>
+      </div>
+
+      <footer class="error-footer">
+        <div>Si vous pensez qu'il s'agit d'une erreur, <a href="{% url 'bibliotheque:contact' %}">contactez-nous</a> en indiquant l'URL.</div>
+      </footer>
+    </div>
+
+    <div class="error-ill">
+      <div class="card-graphic" role="img" aria-label="Illustration page 404">
+        <i class="fas fa-book-dead" title="Page introuvable"></i>
+      </div>
+    </div>
+  </main>
+
+  <!-- Optional JS: Bootstrap + small script to suggest going back -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // si l'utilisateur a cliqué sur un lien ou a une navigation précédente, on peut afficher un bouton "Retour"
+    (function(){
+      if (document.referrer && document.referrer !== location.href) {
+        const meta = document.querySelector('.error-meta');
+        if(meta){
+          const backBtn = document.createElement('a');
+          backBtn.className = 'btn btn-outline-dark shadow-sm';
+          backBtn.href = 'javascript:history.back()';
+          backBtn.innerHTML = '<i class="fas fa-arrow-left me-2"></i> Retour';
+          meta.appendChild(bac

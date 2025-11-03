@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Mon Espace{% endblock title %}
+<style>
+/* === SECTION STATISTIQUES === */
+.stat-card {
+  background: linear-gradient(145deg, #f9fafb, #e5e7eb);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(145deg, #e0f2fe, #ecfdf5);
+}
+
+.stat-icon {
+  font-size: 2.2rem;
+  color: #2563eb;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  color: #10b981;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.stat-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #475569;
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+}
+</style>
+{% block content %}
+<!-- HEADER -->
+  <header class="bg-dark text-white p-4 mb-5 my_space-header">
+    <div class="container d-flex justify-content-between align-items-center">
+      <h1 class="h3">📚 Mon Espace</h1>
+     
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- === SECTION STATISTIQUES === -->
+<section class="mb-5 mt-4">
+  <div class="row text-center g-4">
+
+    <div class="col-md-3 col-6">
+      <div class="p-4 stat-card">
+        <i class="fas fa-upload stat-icon"></i>
+        <div class="stat-number">{{ mes_soumissions }}</div>
+        <div class="stat-label">Documents Uploadés</div>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="p-4 stat-card">
+        <i class="fas fa-download stat-icon"></i>
+        <div class="stat-number">—</div>
+        <div class="stat-label">Téléchargements</div>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="p-4 stat-card">
+        <i class="fas fa-book-open stat-icon"></i>
+        <div class="stat-number">{{ livres }}</div>
+        <div class="stat-label">Documents Disponibles</div>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="p-4 stat-card">
+        <i class="fas fa-clock stat-icon"></i>
+        <div class="stat-number">—</div>
+        <div class="stat-label">Heures de Lecture</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Mes Soumissions -->
+<section class="mb-5">
+  <h3 class="section-title">📤 Mes Soumissions</h3>
+
+  <!-- ======== BOUTONS ======== -->
+  <div class="text-end mb-4">
+    <button class="btn btn-success px-4 py-2" data-bs-toggle="modal" data-bs-target="#ajouterLivreModal">
+      <i class="fas fa-plus-circle me-2"></i> Ajouter un Livre
+    </button>
+
+  
+  </div>
+
+  <div class="list-group">
+    {% if mes_livres %}
+      {% for livre in mes_livres %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">{{ livre.titre }}</h6>
+            <small class="text-muted">Publié le {{ livre.datepublication|date:"d/m/Y" }}</small>
+          </div>
+
+          <div>
+            <!-- Bouton Voir -->
+            <button class="btn btn-sm btn-outline-primary me-2" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalVoir{{ livre.idlivre }}">
+              <i class="fas fa-eye"></i>
+            </button>
+
+            <!-- Bouton Supprimer -->
+            <button class="btn btn-sm btn-outline-danger" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalSupprimer{{ livre.idlivre }}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Voir -->
+        <div class="modal fade" id="modalVoir{{ livre.idlivre }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ livre.titre }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+              </div>
+
+              <div class="modal-body text-center">
+                {% if livre.cover_image %}
+                  <img src="{{ livre.cover_image.url }}" class="img-fluid rounded shadow-sm mb-3" alt="{{ livre.titre }}" style="max-height: 300px; object-fit: cover;">
+                {% else %}
+                  <p class="text-muted">Pas d’image disponible</p>
+                {% endif %}
+                <p><strong>Auteur :</strong> {{ livre.auteur.nom }}</p>
+                <p><strong>Résumé :</strong> {{ livre.resume }}</p>
+              </div>
+
+              <div class="modal-footer justify-content-center">
+                <a href="{% url 'bibliotheque:lire_livre' livre.idlivre %}" class="btn btn-primary">Lire</a>
+                <button class="btn btn-success">🔗 Partager</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Supprimer -->
+        <div class="modal fade" id="modalSupprimer{{ livre.idlivre }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">⚠️ Confirmation de suppression</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+              </div>
+              <div class="modal-body text-center">
+                <p>Voulez-vous vraiment supprimer <strong>{{ livre.titre }}</strong> ?</p>
+              </div>
+              <div class="modal-footer justify-content-center">
+                <a href="{% url 'bibliotheque:supprimer_livre' livre.idlivre %}" class="btn btn-danger">Supprimer</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+       {% else %}
+       <p class="text-muted">Vous n'avez encore soumis aucun livre.</p>
+    {% endif %}
+  </div>
+</section>
+
+
+
+    <!-- Livres récemment consultés -->
+    <section class="mb-5">
+      <h3 class="section-title">📖 Livres récemment consultés</h3>
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <img src="{% static 'images/livre1.jpg'%}" alt="Livre 1" class="book-cover">
+          <p class="mt-2 text-center">Apprendre Python</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <img src="{% static 'images/livre2.jpg' %}" alt="Livre 2" class="book-cover">
+          <p class="mt-2 text-center">Introduction à l’IA</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <img src="{% static 'images/livre3.jpg' %}" alt="Livre 3" class="book-cover">
+          <p class="mt-2 text-center">Développement Web</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <img src="{% static 'images/livre4.jpg'%}" alt="Livre 4" class="book-cover">
+          <p class="mt-2 text-center">Sécurité Informatique</p>
+        </div>
+      </div>
+    </section>
+<!-- Modal : Ajouter un livre -->
+<div class="modal fade" id="ajouterLivreModal" tabindex="-1" aria-labelledby="ajouterLivreLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'bibliotheque:mon_espace' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="ajouterLivreLabel">📘 Ajouter un nouveau livre</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+
+        <div class="modal-body">
+        {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+          <div class="row g-3">
+          
+            <div class="col-md-6">
+              {{ form.titre.label_tag }}
+              {{ form.titre }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Statut *</label>
+              {{ form.statut }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Langue</label>
+              {{ form.langue }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Nombre de pages</label>
+              {{ form.nbpage }}
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Résumé</label>
+              {{ form.resume }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Catégorie *</label>
+              {{ form.categorie }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Auteur</label>
+              {{ form.auteur }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Fichier du livre *</label>
+              {{ form.fichier }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Image de couverture (optionnelle)</label>
+              {{ form.cover_image }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     MODAL AJOUTER CATEGORIE
+========================= -->
+<div class="modal fade" id="ajouterCategorieModal" tabindex="-1" aria-labelledby="ajouterCategorieLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="ajouterCategorieLabel">Ajouter une catégorie</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <form method="POST" action="{% url 'bibliotheque:ajouter_categorie' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nom" class="form-label">Nom de la catégorie</label>
+            <input type="text" class="form-control" id="nom" name="nom" required>
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <input type="text" class="form-control" id="type" name="type" placeholder="ex: livre, roman, etc.">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     MODAL AJOUTER AUTEUR
+========================= -->
+<div class="modal fade" id="ajouterAuteurModal" tabindex="-1" aria-labelledby="ajouterAuteurLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="ajouterAuteurLabel">Ajouter un auteur</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <form method="POST" action="{% url 'bibliotheque:ajouter_auteur' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nomAuteur" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="nomAuteur" name="nom" required>
+          </div>
+          <div class="mb-3">
+            <label for="prenomAuteur" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="prenomAuteur" name="prenom">
+          </div>
+          <div class="mb-3">
+            <label for="adresseAuteur" class="form-label">Adresse</label>
+            <input type="text" class="form-control" id="adresseAuteur" name="adresse" placeholder="Ville, pays...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+    <!-- Recommandations -->
+  {% if livres_recommandes %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-4">📚 Recommandations pour vous</h2>
+    <div class="row g-4">
+      {% for livre in livres_recommandes %}
+        <div class="col-md-3 col-sm-6">
+        <a href="{% url 'bibliotheque:details' livre.idlivre %}" style="text-decoration: none; color: inherit;">
+          <div class="card doc-card">
+            <img
+              src="{{ livre.cover_image.url }}"
+              class="card-img-top"
+              alt="{{ livre.titre }}"
+            />
+            <div class="card-body">
+              <h6 class="card-title text-muted">{{ livre.titre }}</h6>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+  </main>
+
+
+
+{% endblock content %}

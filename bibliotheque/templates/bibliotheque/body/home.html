@@ -1,0 +1,229 @@
+{% extends "base.html" %} {% load static %} {% block title %}Page d'acceuil{%endblock title %}
+ {% block content %}
+
+<!-- HERO SECTION -->
+<section
+  class="hero position-relative text-center text-white d-flex align-items-center"
+>
+  <!-- Image de fond -->
+  <img
+    src="{% static 'images/bibliotheque.jpg' %}"
+    alt="Bibliothèque"
+    class="hero-bg"
+  />
+
+  <div class="container position-relative z-1 pt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h6 class="fw-bold text-uppercase mb-2" style="letter-spacing: 3px">
+          Programme
+        </h6>
+        <h1 class="display-4 fw-bold mb-3">Découvrez, Lisez et Apprenez</h1>
+        <p class="lead mb-4">
+          Accédez à des milliers de livres numériques, articles et ressources
+          éducatives pour booster votre savoir.
+        </p>
+
+        <div class="d-flex justify-content-center mb-3">
+          <button class="btn btn-light me-2 active px-4 py-2 fw-semibold">
+            <a href="#categorie_livre" class="text-decoration-none"
+              >📚 Trouver un livre</a
+            >
+          </button>
+        
+        </div>
+ <form
+      method="GET"
+      action="{% url 'bibliotheque:recherche_livres' %}"
+      class="d-flex flex-wrap justify-content-center gap-2 bg-white p-3 rounded-4 shadow-lg"
+      style="max-width: 800px; margin: 0 auto;"
+    >
+      <!-- Champ texte -->
+      <input
+        type="text"
+        name="query"
+        value="{{ query }}"
+        class="form-control border-0 flex-grow-1"
+        placeholder="Rechercher un livre par titre ou auteur…"
+      />
+
+      <!-- Sélecteur de catégorie -->
+      <div class="d-flex align-items-center border-0 bg-light rounded px-2">
+        <i class="fas fa-book-open text-secondary me-2"></i>
+        <select name="categorie" class="form-select border-0 bg-transparent">
+          <option value="">Toutes les catégories</option>
+          {% for cat in categorie %}
+            <option value="{{ cat.idcategorie }}" {% if cat.idcategorie|stringformat:"s" == categorie_id %}selected{% endif %}>
+              {{ cat.nom }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Bouton -->
+      <button class="btn btn-primary px-4 fw-bold">
+        <i class="fas fa-search"></i> Rechercher
+      </button>
+    </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Dégradé inférieur -->
+  <div
+    class="position-absolute bottom-0 start-0 w-100"
+    style="
+      height: 100px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      z-index: 2;
+    "
+  ></div>
+</section>
+
+<section class="book-list-section py-5" id="categorie_livre">
+  <div class="container">
+    <!-- Titre principal -->
+    <h2 class="text-center fw-bold mb-5" style="color: #2d3ef8">
+      📚 Catégories de livres
+    </h2>
+
+    <div class="row justify-content-center">
+      <!-- Bloc gauche : filtre -->
+      <div class="col-lg-4 mb-4">
+        <div class="filter-box p-4 rounded-4 shadow-sm bg-white">
+          <h6 class="text-uppercase fw-bold mb-3" style="color: #ff4c4c">
+            Catégorie
+          </h6>
+          <select class="form-select mb-3">
+          {% for categorie in categorie %}
+            <option>{{categorie.nom}}</option>
+          {% endfor %}
+          </select>
+
+          
+        </div>
+      </div>
+
+      <!-- Bloc droit : liste de livres -->
+      <div class="col-lg-8">
+        <div class="book-list p-4 rounded-4 shadow-sm bg-white">
+          <!-- Livre 1 -->
+          <div
+            class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3"
+          >
+            <div class="d-flex align-items-center">
+              <img
+                src="{% static 'images/livre1.jpg' %}"
+                alt="Livre 1"
+                class="rounded me-3"
+                style="width: 60px; height: 80px; object-fit: cover"
+              />
+              <div>
+                <h6 class="fw-bold mb-1">Apprendre le HTML</h6>
+                <small class="text-muted">Programmation web</small>
+              </div>
+            </div>
+            <span class="badge bg-light text-dark px-3 py-2 rounded-pill"
+              >Debutant</span
+            >
+          </div>
+
+          <!-- Livre 2 -->
+          <div
+            class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3"
+          >
+            <div class="d-flex align-items-center">
+              <img
+                src="{% static 'images/livre2.jpg' %}"
+                alt="Livre 2"
+                class="rounded me-3"
+                style="width: 60px; height: 80px; object-fit: cover"
+              />
+              <div>
+                <h6 class="fw-bold mb-1">HTML/CSS Avance</h6>
+                <small class="text-muted">programmation web</small>
+              </div>
+            </div>
+            <span class="badge bg-light text-dark px-3 py-2 rounded-pill"
+              >Pro</span
+            >
+          </div>
+
+          <!-- Livre 3 -->
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+              <img
+                src="{% static 'images/livre3.jpg' %}"
+                alt="Livre 3"
+                class="rounded me-3"
+                style="width: 60px; height: 80px; object-fit: cover"
+              />
+              <div>
+                <h6 class="fw-bold mb-1">Tout sur le PHP</h6>
+                <small class="text-muted">Programmation oriente objet</small>
+              </div>
+            </div>
+            <span class="badge bg-light text-dark px-3 py-2 rounded-pill"
+              >Intermediaire</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"></div>
+  </div>
+</section>
+
+
+<!-- 📚 Résultats -->
+<section class="py-5 bg-light" id="resultats">
+  <div class="container">
+
+    {% comment %} {% if query or categorie_id %}
+      <h2 class="text-center mb-4">
+        Résultats{% if query %} pour « {{ query }} »{% endif %}
+        {% if categorie_id %}
+          dans la catégorie «
+          {% for cat in categorie %}
+            {% if cat.idcategorie|stringformat:"s" == categorie_id %}{{ cat.nom }}{% endif %}
+          {% endfor %}
+          »
+        {% endif %}
+      </h2>
+    {% else %}
+      <h2 class="text-center mb-4">📚 Tous les Documents</h2>
+    {% endif %} {% endcomment %}
+
+    {% if livres %}
+      <div class="row g-4">
+        {% for livre in livres %}
+          <div class="col-md-3 col-sm-6">
+            <a href="{% url 'bibliotheque:details' livre.idlivre %}" style="text-decoration: none; color: inherit;">
+              <div class="card doc-card h-100 shadow-sm">
+                {% if livre.cover_image %}
+                  <img src="{{ livre.cover_image.url }}" class="card-img-top" alt="{{ livre.titre }}">
+                {% else %}
+                  <img src="{% static 'images/default-cover.jpg' %}" class="card-img-top" alt="Couverture par défaut">
+                {% endif %}
+                <div class="card-body">
+                  <h6 class="card-title text-muted">{{ livre.titre }}</h6>
+                  <p class="text-secondary small mb-0">{{ livre.auteur }}</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-muted mt-4">Aucun livre trouvé pour cette recherche.</p>
+    {% endif %}
+  </div>
+</section>
+{% comment %} <script>
+  document.getElementById('resultats').scrollIntoView({ behavior: 'smooth' });
+</script>
+{% endif %} {% endcomment %}
+  {% endblock content %}
+

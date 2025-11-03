@@ -1,0 +1,492 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque en Ligne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            padding: 0.8rem 2rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Categories Section */
+        .categories {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .categories h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Books Section */
+        .books-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            color: #333;
+        }
+
+        .add-btn {
+            padding: 0.8rem 1.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .add-btn:hover {
+            background: #5568d3;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .book-info {
+            padding: 1rem;
+        }
+
+        .book-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .book-author {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .likes, .downloads {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        /* Messages */
+        .messages {
+            max-width: 1400px;
+            margin: 1rem auto;
+            padding: 0 2rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">📚 Bibliothèque</a>
+            <ul class="nav-links">
+                <li><a href="#">Accueil</a></li>
+                <li><a href="#">Livres</a></li>
+                <li><a href="#">Auteurs</a></li>
+                <li><a href="#">FAQ</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="#">Mon Espace</a></li>
+                    <li><a href="#">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="#">Connexion</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Bienvenue à la Bibliothèque en Ligne</h1>
+        <p>Découvrez, lisez et partagez des milliers de livres</p>
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher un livre, un auteur...">
+            <button>Rechercher</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ livre.count }}</div>
+                <div class="stat-label">Livres disponibles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ auteur.count }}</div>
+                <div class="stat-label">Auteurs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ categorie.count }}</div>
+                <div class="stat-label">Catégories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ commentaire.count }}</div>
+                <div class="stat-label">Commentaires</div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="categories">
+            <h2>Catégories</h2>
+            <div class="category-grid">
+                {% for cat in categorie %}
+                <div class="category-card">
+                    <h3>{{ cat.nom }}</h3>
+                    {% if cat.type %}
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">{{ cat.type }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Books Section -->
+        <div class="books-section">
+            <div class="section-header">
+                <h2>Livres Récents</h2>
+                {% if user.is_authenticated %}
+                <a href="#" class="add-btn" onclick="document.getElementById('modalAjoutLivre').style.display='block'">+ Ajouter un livre</a>
+                {% endif %}
+            </div>
+            <div class="books-grid">
+                {% for book in livre %}
+                <div class="book-card" onclick="window.location.href='#'">
+                    {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.titre }}" class="book-image">
+                    {% else %}
+                    <div class="book-image"></div>
+                    {% endif %}
+                    <div class="book-info">
+                        <div class="book-title">{{ book.titre }}</div>
+                        <div class="book-author">{{ book.auteur.nom }} {{ book.auteur.prenom }}</div>
+                        <div style="font-size: 0.85rem; color: #888; margin-top: 0.3rem;">
+                            {{ book.categorie.nom }}
+                        </div>
+                        <div class="book-meta">
+                            <div class="likes">❤️ {{ book.mentionjaime }}</div>
+                            <div class="downloads">⬇️ {{ book.nbtelechargement }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>Aucun livre disponible pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Bibliothèque en Ligne. Tous droits réservés.</p>
+    </footer>
+
+    <!-- Modal Ajout Livre -->
+    <div id="modalAjoutLivre" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; max-width:600px; margin:50px auto; padding:2rem; border-radius:15px; max-height:90vh; overflow-y:auto;">
+            <h2 style="margin-bottom:1.5rem;">Ajouter un nouveau livre</h2>
+            <form method="POST" action="#" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Titre *</label>
+                    <input type="text" name="titre" required style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Format *</label>
+                    <select name="format" required style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                        <option value="PDF">PDF</option>
+                        <option value="EPUB">EPUB</option>
+                        <option value="MOBI">MOBI</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Statut *</label>
+                    <select name="statut" required style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                        <option value="Disponible">Disponible</option>
+                        <option value="Indisponible">Indisponible</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Auteur *</label>
+                    <select name="idauteur" required style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                        {% for aut in auteur %}
+                        <option value="{{ aut.idauteur }}">{{ aut.nom }} {{ aut.prenom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Catégorie *</label>
+                    <select name="idcategorie" required style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                        {% for cat in categorie %}
+                        <option value="{{ cat.idcategorie }}">{{ cat.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Nombre de pages</label>
+                    <input type="number" name="nbpage" style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Résumé</label>
+                    <textarea name="resume" rows="3" style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;"></textarea>
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Langue</label>
+                    <input type="text" name="langue" style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <div style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Date de publication</label>
+                    <input type="date" name="datepublication" style="width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <div style="display:flex; gap:1rem; margin-top:2rem;">
+                    <button type="submit" style="flex:1; padding:1rem; background:#667eea; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Ajouter</button>
+                    <button type="button" onclick="document.getElementById('modalAjoutLivre').style.display='none'" style="flex:1; padding:1rem; background:#ccc; color:#333; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+

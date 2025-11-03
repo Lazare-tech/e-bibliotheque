@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    :root {
+        --primary: #2563eb;
+        --secondary: #0891b2;
+        --accent: #10b981;
+        --dark: #1e293b;
+    }
+
+    .inbox-section {
+        min-height: 80vh;
+        padding: 4rem 0;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .inbox-section::before {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -150px;
+        right: -100px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(120deg); }
+        66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    .inbox-container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .inbox-header {
+        background: white;
+        border-radius: 20px 20px 0 0;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .inbox-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 0;
+    }
+
+    .inbox-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .inbox-title h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .inbox-badge {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+    }
+
+    .inbox-card {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .messages-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .messages-table thead {
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    }
+
+    .messages-table thead th {
+        padding: 1.25rem 1.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .messages-table thead th i {
+        margin-right: 0.5rem;
+        color: var(--primary);
+    }
+
+    .messages-table tbody tr {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .messages-table tbody tr:hover {
+        background: linear-gradient(90deg, rgba(37, 99, 235, 0.05), rgba(16, 185, 129, 0.05));
+        transform: scale(1.01);
+    }
+
+    .messages-table tbody td {
+        padding: 1.25rem 1.5rem;
+        color: #4b5563;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+
+    .sender-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .sender-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .sender-details {
+        flex: 1;
+    }
+
+    .sender-name {
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .email-badge {
+        background: #f3f4f6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: #6b7280;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .email-badge i {
+        font-size: 0.7rem;
+    }
+
+    .subject-text {
+        font-weight: 500;
+        color: var(--dark);
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .date-badge {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .date-badge i {
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .empty-icon i {
+        font-size: 3rem;
+        color: var(--primary);
+    }
+
+    .empty-state h3 {
+        color: var(--dark);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .inbox-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .inbox-title {
+            flex-direction: column;
+        }
+
+        .inbox-title h2 {
+            font-size: 1.5rem;
+        }
+
+        .messages-table thead th,
+        .messages-table tbody td {
+            padding: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .subject-text {
+            max-width: 150px;
+        }
+    }
+</style>
+
+<div class="inbox-section">
+    <div class="container inbox-container">
+        <div class="inbox-header">
+            <div class="inbox-title">
+                <div class="inbox-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div>
+                    <h2>Boîte de réception</h2>
+                    <p class="text-muted mb-0">Gérez vos messages reçus</p>
+                </div>
+            </div>
+            <div class="inbox-badge">
+                <i class="fas fa-envelope me-2"></i>
+                {{ messages|length }} message{{ messages|length|pluralize }}
+            </div>
+        </div>
+
+        <div class="inbox-card">
+            {% if messages %}
+                <div class="table-container">
+                    <table class="messages-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user"></i>Expéditeur</th>
+                                <th><i class="fas fa-at"></i>Email</th>
+                                <th><i class="fas fa-tag"></i>Objet</th>
+                                <th><i class="fas fa-calendar"></i>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for msg in messages %}
+                            <tr onclick="showMessageDetails(this)" data-message-id="{{ msg.id }}">
+                                <td>
+                                    <div class="sender-info">
+                                        <div class="sender-avatar">
+                                            {{ msg.expediteur.username|slice:":1"|upper }}
+                                        </div>
+                                        <div class="sender-details">
+                                            <p class="sender-name">{{ msg.expediteur.username }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="email-badge">
+                                        <i class="fas fa-envelope"></i>
+                                        {{ msg.expediteur.email }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="subject-text" title="{{ msg.objet }}">
+                                        {{ msg.objet }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="date-badge">
+                                        <i class="far fa-clock"></i>
+                                        {{ msg.date_envoi|date:"d/m/Y H:i" }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3>Aucun message reçu</h3>
+                    <p>Votre boîte de réception est vide pour le moment</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function showMessageDetails(row) {
+        // Animation de clic
+        row.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            row.style.transform = 'scale(1.01)';
+        }, 100);
+        
+        // Ici vous pouvez ajouter une redirection ou un modal
+        // const messageId = row.getAttribute('data-message-id');
+        // window.location.href = `/message/${messageId}/`;
+    }
+
+    // Animation au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.messages-table tbody tr');
+        rows.forEach((row, index) => {
+            row.style.opacity = '0';
+            row.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                row.style.transition = 'all 0.5s ease';
+                row.style.opacity = '1';
+                row.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+    // Effet hover sur les lignes
+    document.querySelectorAll('.messages-table tbody tr').forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.boxShadow = 'none';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% load static %}
+
+<style>
+/* ===== NAVBAR STYLING ===== */
+.navbar {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  padding: 0.8rem 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #10b981 !important;
+  transform: scale(1.05);
+}
+
+.navbar-brand i {
+  color: #10b981;
+}
+
+/* === NAV LINKS === */
+.nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #10b981);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 80%;
+}
+
+.nav-link:hover {
+  color: #10b981 !important;
+}
+
+/* === DROPDOWN === */
+.dropdown-menu {
+  background: #1e293b;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.dropdown-item {
+  color: white;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(90deg, #2563eb, #10b981);
+}
+
+/* === USER SECTION === */
+.img-profile {
+  border: 2px solid #10b981;
+  transition: transform 0.3s ease;
+}
+
+.img-profile:hover {
+  transform: scale(1.1);
+}
+
+/* === BUTTONS === */
+.btn-outline-primary {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.btn-outline-primary:hover {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.btn-outline-danger {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-outline-secondary {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-outline-secondary:hover {
+  background: #2563eb;
+  color: white;
+}
+
+/* === MOBILE TOGGLER === */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
+</style>
+
+
+<!-- ===== NAVBAR HTML ===== -->
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" href="{% url 'bibliotheque:homepage' %}">
+      <i class="fas fa-book-open me-2"></i>E-Bibliothèque
+    </a>
+
+    <!-- Bouton mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Liens -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'homepage' %}active{% endif %}" 
+             href="{% url 'bibliotheque:homepage' %}">Accueil</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'categories' %}active{% endif %}" 
+             href="#" id="dropdownCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Catégories
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownCategories">
+          {% for categorie in categorie %}
+            <li><a class="dropdown-item" href="#">{{ categorie.nom}}</a></li>
+                          {% endfor %}
+            
+              </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'aide' %}active{% endif %}" 
+             href="{% url 'bibliotheque:aide' %}">Aide</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'faq' %}active{% endif %}" 
+             href="{% url 'bibliotheque:faq' %}">FAQ</a>
+        </li>
+          <li class="nav-item">
+             <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+             href="{% url 'bibliotheque:contact'%}">Contact</a>
+
+            </li>
+            
+              {% if user.is_authenticated %}
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'mon_espace' %}active{% endif %}" 
+             href="{% url 'bibliotheque:mon_espace' %}">Mon espace</a>
+        </li>
+
+         
+        <li class="nav-item ms-3 dropdown">
+    <a class=" dropdown-toggle d-flex align-items-center" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <!-- Afficher les initiales -->
+      <span class="rounded-circle bg-primary text-white fw-bold d-inline-flex justify-content-center align-items-center" 
+            style="width: 30px; height: 30px;">
+        {{ user.first_name|default:user.username|slice:":1" |upper }}{{ user.last_name|slice:":1" |upper }}
+      </span>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+      <li><a class="dropdown-item" href="#">Modifier le profil</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Déconnexion</a></li>
+    </ul>
+
+  {% else %}
+    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Login</a>
+  {% endif %}
+</li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

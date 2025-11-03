@@ -1,0 +1,8 @@
+asgiref==3.8.1
+backports.zoneinfo==0.2.1
+django==4.2.25
+pdf2image==1.17.0
+pillow==10.4.0
+PyMuPDF==1.24.11
+sqlparse==0.5.3
+typing-extensions==4.13.2
